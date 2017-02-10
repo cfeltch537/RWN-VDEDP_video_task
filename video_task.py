@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
     fixation.draw()
     win.flip()
-    core.wait(2.0)
+    core.wait(10.0)
 
     play_video('stimuli/test1.mp4')
 
