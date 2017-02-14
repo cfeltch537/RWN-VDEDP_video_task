@@ -7,7 +7,7 @@
 # video task
 #
 # ver 0.1 - mbod@asc.upenn.edu 11/20/16
-#
+# ver 0.11 - mbod@asc.upenn.edu 2/13/17
 #
 
 from __future__ import print_function, division
@@ -21,7 +21,7 @@ prefs.general['audioLib'] = ['pygame', 'pyo']
 
 import os
 import re
-
+import time
 
 ##########
 # PARAMS #
@@ -33,12 +33,13 @@ STIM_DIR = 'stimuli'
 DEBUG=True
 use_fullscreen = False
 
+
+# set up clocks
+# and logging
 globalClock = core.Clock()
 localClock = core.Clock()
-
-#logging.console.setLevel(logging.DEBUG)
-
-logger = logging.LogFile('logs/test.log', filemode='w', level=logging.DEBUG)
+logging.setDefaultClock(globalClock)
+logger = logging.LogFile('logs/test.log', filemode='w')
 
 
 
@@ -73,7 +74,7 @@ ready_prompt = visual.TextStim(win, text='Ready...', pos=(0,2), height=1.3)
 
 instruction_block = visual.TextStim(win, text='', pos=(0,3), wrapWidth=26, height=1.1)
 
-next_label = visual.TextStim(win, text='[Press space to continue]', pos=(0,-3), height=0.9)
+next_label = visual.TextStim(win, text='[Press space to continue]', pos=(0,-4), height=0.8)
 
 video = visual.MovieStim3(win, filename='stimuli/test1.mov',
                              pos=(0,0),
@@ -95,8 +96,7 @@ def play_video(filename):
     if DEBUG:
         print("Video {} duration is {}".format(filename,video_duration))
 
-    # play video
-    #video.play()
+    logging.log(level=logging.DATA, msg='STARTING video {} dur {}\tsys:{}'.format(filename, video_duration, time.time()))
 
     while localClock.getTime() < video_duration:        
         video.draw()
@@ -109,22 +109,39 @@ def play_video(filename):
 
 
 def do_fixation(fix_length, clock=localClock):
+    
+    
+    logging.log(level=logging.DATA, msg='FIXATION dur {}\tsys:{}'.format(fix_length, time.time()))
+
     clock.reset()
     while clock.getTime() < fix_length:
         fixation.draw()
         win.flip()
         
         
-def show_instructions(display_time=10):
+def show_instructions(display_time=None):
     # instructions
-    for instruct_text in instructions:
+    for idx, instruct_text in enumerate(instructions):
+        
+        logging.log(level=logging.DATA, msg='Showing instruction screen {}\tsys:{}'.format(idx+1, time.time()))
+
         instruct_text = re.sub('^\s+','',
                                 re.sub('###\s*','\n\n',
                                     re.sub('\s{2,}',' ', instruct_text.strip())))
         instruction_block.setText(instruct_text)
         instruction_block.draw()
-        win.flip()
-        core.wait(display_time)
+        
+        
+        if display_time is None:
+           next_label.draw()
+           win.flip()
+           event.waitKeys(keyList=['space'])
+        else:
+           win.flip()
+           core.wait(display_time)
+           
+        
+
 
 def ready_screen():
     ready_prompt.draw()
@@ -132,6 +149,10 @@ def ready_screen():
     win.flip()
     event.waitKeys(keyList=['space'])
     
+    
+    globalClock.reset()
+    logging.log(level=logging.DATA, msg='*********** TASK STARTED *************\tsys:{}'.format(time.time()))
+
 
 
 if __name__ == '__main__':
@@ -152,9 +173,13 @@ if __name__ == '__main__':
         play_video(os.path.join(STIM_DIR, vid))
 
 
-    do_fixation(1.0)
+    do_fixation(10.0)
+
+    logging.log(level=logging.DATA, msg='*********** TASK ENDED *************\tsys:{}'.format(time.time()))
+
 
     # clean up
+    logging.flush()
     win.close()
     core.quit()
 
