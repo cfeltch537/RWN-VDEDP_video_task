@@ -52,7 +52,7 @@ instructions = ['''In this task, you are going to watch a series of video clips
                   news stories will change how viewers respond to the news.''', 
                   
                 '''You will see the old and new formats in the news clips.
-                  You will watch 32 clips in total.
+                  You will watch 16 clips in total.
                   ###
                   Please pay attention to them as you will be asked for your
                   opinions about them latter.''' ]
@@ -86,6 +86,9 @@ fixation = visual.TextStim(win, text="+", pos=[0,0], height=2)
 
 
 
+#############
+# FUNCTIONS #
+#############
 
 def play_video(filename):
     
@@ -156,7 +159,6 @@ def ready_screen():
 
 
 if __name__ == '__main__':
-
 
     ready_screen()
 
