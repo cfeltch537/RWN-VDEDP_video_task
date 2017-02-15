@@ -23,7 +23,6 @@ import os
 import re
 import time
 import datetime
-
 import random
 import csv
 
@@ -36,9 +35,9 @@ DEBUG=True
 use_fullscreen = False
 
 # seconds for open recall period (5 mins/300 secs for full task?)
-open_recall_duration = 10  
+open_recall_duration = 30  
 
-closed_recall_duration = 8
+closed_recall_duration = 10
 
 
 open_recall_instructions = '''
@@ -145,6 +144,7 @@ def show_instructions(display_time=None):
            win.flip()
            core.wait(display_time)
            
+           
 def ready_screen():
     ready_prompt.draw()
     next_label.draw()
@@ -174,6 +174,8 @@ def open_recall(subj_id='test'):
     win.flip()
     event.waitKeys(keyList=['space'])
     
+    logging.log(level=logging.DATA, msg='START open recall\tsys:{}'.format(time.time()))
+    
     tr=CountDownTimer(open_recall_duration)
     
     
@@ -189,6 +191,10 @@ def open_recall(subj_id='test'):
     
     mic.reset()
     
+    logging.log(level=logging.DATA, msg='END open recall\tsys:{}'.format(time.time()))
+    logging.flush()
+    
+    
 def closed_recall(subj_id='test'):
     
     stimuli_list = [r for r in csv.DictReader(open('stimuli.csv'))]
@@ -201,8 +207,13 @@ def closed_recall(subj_id='test'):
     win.flip()
     event.waitKeys(keyList=['space'])
     
+    logging.log(level=logging.DATA, msg='START closed recall\tsys:{}'.format(time.time()))
+
 
     for row in stimuli_list:
+        
+        logging.log(level=logging.DATA, msg='stim - {}\tsys:{}'.format(row['file2'],time.time()))
+
         
         actor_img.setImage('img/actor{}.png'.format(row['actor']))
         prompt_text.setText(row['prompt'])
@@ -224,6 +235,9 @@ def closed_recall(subj_id='test'):
         
         do_fixation(5.0)
         mic.reset()
+    logging.log(level=logging.DATA, msg='END closed recall\tsys:{}'.format(time.time()))
+    logging.flush()
+
 
 #------------------------------- MAIN -----------------------------
 
@@ -236,7 +250,18 @@ if __name__ == "__main__":
     
     closed_recall()
     
+    do_fixation(10.0)
+
+    logging.log(level=logging.DATA, msg='*********** TASK ENDED *************\tsys:{}'.format(time.time()))
+
     # clean up
     logging.flush()
     win.close()
     core.quit()
+    
+    
+###################################
+# dev note - 2/14/17
+#    - see https://discourse.psychopy.org/t/microphone-recording-not-ending-properly/1039/10
+#          re. issue with microphone capture hanging task
+#
