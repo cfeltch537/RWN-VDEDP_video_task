@@ -1,0 +1,5 @@
+cond,actor,issue,code,file,file2,sent,time,prompt
+2,2,r22,r22h,2r22h,test1,Applicants for public assistance will soon have to take a drug test and pass to receive benefits. That puts people who need help in a pretty rough spot. Sounds like they could use some drugs.,11,drug test for benefits
+2,1,d01,d01n,1d01n,test2,The state constitution may be amended so that the minimum age for serving in the state Senate is lowered to 18-years-old. Some have argued that 18 year olds are not responsible enough to hold office.,11,age for state Senate
+2,1,d10,d10n,1d10n,test3,Lawmakers want to take speed camera technology statewide by installing 170 new traffic cameras over the next five years. This is being touted as an alternative to the previous policy of relying on the state police to ticket speeders.,13,new speed cameras
+2,2,r23,r23h,2r23h,test4,"The state can no longer contract with entities who have invested over two million dollars in Iran's energy or financial sectors--which is good, because we definitely need more reasons for Iran to hate us.",13,investing in Iranian industry
