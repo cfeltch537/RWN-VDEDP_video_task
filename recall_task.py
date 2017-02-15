@@ -39,7 +39,7 @@ open_recall_duration = 30
 
 closed_recall_duration = 10
 
-
+    
 open_recall_instructions = '''
         Now we would like you to tell the driver about as many 
         of the 16 news items you saw before this drive using as much detail as you can remember.
@@ -174,7 +174,6 @@ def format_text(txt):
 def open_recall(subj_id='test'):
     
     open_recall_audio_filename = os.path.join('audio','open_recall_{}.wav'.format(subj_id))
-        
     instruction_block.setText(format_text(open_recall_instructions))
     
     instruction_block.draw()
