@@ -65,6 +65,11 @@ localClock = core.Clock()
 logging.setDefaultClock(globalClock)
 logger = logging.LogFile('logs/recall_test.log', filemode='w')
 
+if not os.path.exists('logs'):
+    os.mkdir('logs')
+    
+if not os.path.exists('audio'):
+    os.mkdir('audio') 
 
 #############################
 # set up window and stimuli #

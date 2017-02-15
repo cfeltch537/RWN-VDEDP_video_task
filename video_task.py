@@ -35,15 +35,18 @@ DEBUG=True
 use_fullscreen = False
 
 
-# set up clocks
-# and logging
+#############################
+# set up clocks and logging #
+#############################
+
 globalClock = core.Clock()
 localClock = core.Clock()
 logging.setDefaultClock(globalClock)
 logger = logging.LogFile('logs/test.log', filemode='w')
 
-
-
+if not os.path.exists('logs'):
+    os.mkdir('logs')
+    
 
 instructions = ['''In this task, you are going to watch a series of video clips 
                  of two people who are auditioning for a news anchor position. 
