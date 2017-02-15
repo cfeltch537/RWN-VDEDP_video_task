@@ -16,12 +16,17 @@ from psychopy import visual, logging, core, event, microphone
 # -- set the order of audio libraries
 # -- need pygame first for movie audio
 from psychopy import prefs
-prefs.general['audioLib'] = ['pyo','pygame']
+prefs.general['audioDriver'] = ['portaudio','coreaudio']
+
 
 import os
 import re
 import time
 import datetime
+
+import random
+import csv
+
 
 ##########
 # PARAMS #
@@ -32,6 +37,8 @@ use_fullscreen = False
 
 # seconds for open recall period (5 mins/300 secs for full task?)
 open_recall_duration = 10  
+
+closed_recall_duration = 8
 
 
 open_recall_instructions = '''
@@ -80,6 +87,9 @@ next_label = visual.TextStim(win, text='[Press space to continue]', pos=(0,-4), 
 counter_label = visual.TextStim(win, text='0:00', pos=(0,-4), height=0.9)
 
 fixation = visual.TextStim(win, text="+", pos=[0,0], height=2)
+
+actor_img = visual.ImageStim(win, pos=[0,2] )
+prompt_text = visual.TextStim(win, text='', pos=[0,4] )
 
 
 #####################
@@ -177,7 +187,12 @@ def open_recall(subj_id='test'):
     
     do_fixation(2.0)
     
-def closed_recall():
+    mic.reset()
+    
+def closed_recall(subj_id='test'):
+    
+    stimuli_list = [r for r in csv.DictReader(open('stimuli.csv'))]
+    random.shuffle(stimuli_list)
     
     instruction_block.setText(format_text(closed_recall_instructions))
     
@@ -187,6 +202,28 @@ def closed_recall():
     event.waitKeys(keyList=['space'])
     
 
+    for row in stimuli_list:
+        
+        actor_img.setImage('img/actor{}.png'.format(row['actor']))
+        prompt_text.setText(row['prompt'])
+        
+        closed_recall_audio_filename = "audio/closed_recall_{}_{}.wav".format(subj_id, row['file2'])
+        
+        tr=CountDownTimer(closed_recall_duration)
+    
+    
+        mic.record(closed_recall_duration+5, filename = closed_recall_audio_filename)
+        
+        while tr.get_remaining_time()>0:
+            actor_img.draw()
+            prompt_text.draw()
+            counter_label.setText(tr.show_remaining_time())
+
+            counter_label.draw()
+            win.flip()
+        
+        do_fixation(5.0)
+        mic.reset()
 
 #------------------------------- MAIN -----------------------------
 

@@ -17,7 +17,8 @@ from psychopy import visual, logging, core, event
 # -- set the order of audio libraries
 # -- need pygame first for movie audio
 from psychopy import prefs
-prefs.general['audioLib'] = ['pygame', 'pyo']
+prefs.general['audioLib'] = ['pygame','pyo']
+
 
 import os
 import re
