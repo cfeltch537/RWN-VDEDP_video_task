@@ -41,7 +41,7 @@ closed_recall_duration = 10
 
 
 open_recall_instructions = '''
-        For the next 5 minutes we would like you to tell the driver about as many 
+        Now we would like you to tell the driver about as many 
         of the 16 news items you saw before this drive using as much detail as you can remember.
         ###
         Try to use as much as the time as possible and be as specific as you can about what was described
@@ -62,14 +62,17 @@ closed_recall_instructions = '''
 #############################
 globalClock = core.Clock()
 localClock = core.Clock()
-logging.setDefaultClock(globalClock)
-logger = logging.LogFile('logs/recall_test.log', filemode='w')
+
 
 if not os.path.exists('logs'):
     os.mkdir('logs')
     
 if not os.path.exists('audio'):
     os.mkdir('audio') 
+    
+logger = logging.LogFile('logs/recall_test.log', level=logging.DATA, filemode='w')
+logging.setDefaultClock(globalClock)
+
 
 #############################
 # set up window and stimuli #
@@ -82,7 +85,7 @@ win = visual.Window([1200,800],
                 
 win.setRecordFrameIntervals(False)  
 
-ready_prompt = visual.TextStim(win, text='Ready...', pos=(0,2), height=1.3)
+ready_prompt = visual.TextStim(win, text='Please start this task once you have driven onto the highway', pos=(0,2), height=1.3)
 
 instruction_block = visual.TextStim(win, text='', pos=(0,3), wrapWidth=26, height=1.1)
 

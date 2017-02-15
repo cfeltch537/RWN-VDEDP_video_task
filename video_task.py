@@ -41,11 +41,14 @@ use_fullscreen = False
 
 globalClock = core.Clock()
 localClock = core.Clock()
-logging.setDefaultClock(globalClock)
-logger = logging.LogFile('logs/test.log', filemode='w')
 
 if not os.path.exists('logs'):
     os.mkdir('logs')
+
+
+logging.LogFile('logs/test.log', level=logging.DATA, filemode='w')
+logging.setDefaultClock(globalClock)
+
     
 
 instructions = ['''In this task, you are going to watch a series of video clips 
