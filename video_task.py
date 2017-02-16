@@ -92,6 +92,15 @@ video = visual.MovieStim3(win, filename='stimuli/test1.mov',
 fixation = visual.TextStim(win, text="+", pos=[0,0], height=2)
 
 
+sharing_question = visual.TextStim(win, text="How likely would you be to share this clip with a friend?", pos=[0,3], height=1.1)
+
+ratingStim=[]
+xpos = [-8, -4, 0, 4, 8]
+for rating in (1,2,3,4,5):
+    ratingStim.append(visual.TextStim(win, text='%i' % rating, pos=(xpos[rating-1],-3)))
+
+anchor1 = visual.TextStim(win, text='Very unlikely', pos=(-8,-5))
+anchor5 = visual.TextStim(win, text='Very likely', pos=(8,-5))
 
 #############
 # FUNCTIONS #
@@ -117,6 +126,20 @@ def play_video(filename):
 
     logging.flush()
 
+
+def get_rating():
+    
+    sharing_question.draw()
+    
+    anchor1.draw()
+    anchor5.draw()
+    
+    for rs in ratingStim:
+        rs.draw()
+    
+    win.flip()
+    
+    resp=event.waitKeys(keyList=['1','2','3','4','5'])
 
 def do_fixation(fix_length, clock=localClock):
     
@@ -181,6 +204,7 @@ if __name__ == '__main__':
 
         play_video(os.path.join(STIM_DIR, vid))
 
+        get_rating()
 
     do_fixation(10.0)
 
