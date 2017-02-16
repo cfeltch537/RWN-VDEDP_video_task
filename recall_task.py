@@ -39,12 +39,12 @@ open_recall_duration = 30
 
 closed_recall_duration = 10
 
-
+    
 open_recall_instructions = '''
         Now we would like you to tell the driver about as many 
         of the 16 news items you saw before this drive using as much detail as you can remember.
         ###
-        Try to use as much as the time as possible and be as specific as you can about what was described
+        Try to give as much detail as possible and be as specific as you can about what was described
         in the news items and your opinion of them.
 '''
 
@@ -52,7 +52,7 @@ closed_recall_instructions = '''
         Now you will be reminded of each of the 16 news items one by one. We would like you to tell the
         driver as much as you can remember about the news item for one minute.
         ###
-        Try to use as much as the time as possible and be as specific as you can about what was described
+        Try to give as much detail as possible and be as specific as you can about what was described
         in the news items and your opinion of them.
 '''
 
@@ -95,9 +95,15 @@ counter_label = visual.TextStim(win, text='0:00', pos=(0,-4), height=0.9)
 
 fixation = visual.TextStim(win, text="+", pos=[0,0], height=2)
 
-actor_img = visual.ImageStim(win, pos=[0,2] )
-prompt_text = visual.TextStim(win, text='', pos=[0,4] )
+actor_img = visual.ImageStim(win, pos=[0,3] )
+prompt_text = visual.TextStim(win, text='', pos=[0,5] )
 
+tell_the_driver = visual.TextStim(win, text='Tell the driver about this now', pos=(0,-2.5), height=1)
+
+recog_question = visual.TextStim(win, text='Have you seen this item before?', pos=(0,-2.5), height=1)
+recog_text = visual.TextStim(win, text='', wrapWidth=24, pos=(0,4), height=1.1)
+recog_yes = visual.TextStim(win, text='Yes (1)', pos=(-5,-4))
+recog_no = visual.TextStim(win, text='No (2)', pos=(5,-4))
 
 #####################
 # Set up microphone #
@@ -174,7 +180,6 @@ def format_text(txt):
 def open_recall(subj_id='test'):
     
     open_recall_audio_filename = os.path.join('audio','open_recall_{}.wav'.format(subj_id))
-        
     instruction_block.setText(format_text(open_recall_instructions))
     
     instruction_block.draw()
@@ -236,6 +241,7 @@ def closed_recall(subj_id='test'):
         while tr.get_remaining_time()>0:
             actor_img.draw()
             prompt_text.draw()
+            tell_the_driver.draw()
             counter_label.setText(tr.show_remaining_time())
 
             counter_label.draw()
@@ -247,6 +253,47 @@ def closed_recall(subj_id='test'):
     logging.flush()
 
 
+def closed_recall_v2(subj_id='test'):
+    recog_list = [i for i in csv.DictReader(open('recog_stim.csv'))]
+    random.shuffle(recog_list)
+    
+    for recog_item in recog_list:
+        recog_question.draw()
+        recog_text.setText(recog_item['text'])
+        recog_text.draw()
+        recog_yes.draw()
+        recog_no.draw()
+        win.flip()
+        
+        resp = event.waitKeys(keyList=['1','2'])    ### to do record responses
+        logging.log(level=logging.DATA, msg="Recognition item: {} - {}\tresp: {}".format(recog_item['code'], recog_item['text'], resp))
+
+
+    old_items = [i for i in recog_list if not i['code'].endswith('n')]
+    for item in old_items:
+        recog_text.setText(item['text'])
+
+        closed_recall_audio_filename = "audio/closed_recall_{}_{}.wav".format(subj_id, item['code'])
+        
+        tr=CountDownTimer(closed_recall_duration)
+    
+    
+        mic.record(closed_recall_duration+5, filename = closed_recall_audio_filename)
+        
+        while tr.get_remaining_time()>0:
+            recog_text.draw()
+            tell_the_driver.draw()
+            counter_label.setText(tr.show_remaining_time())
+
+            counter_label.draw()
+            win.flip()
+        
+        do_fixation(5.0)
+        mic.reset()
+        
+
+        
+
 #------------------------------- MAIN -----------------------------
 
 if __name__ == "__main__":
@@ -254,10 +301,13 @@ if __name__ == "__main__":
     
     ready_screen()
     
+    
     open_recall()
-    
+
+    # two possible versions of closed recall
     closed_recall()
-    
+    #closed_recall_v2()
+
     do_fixation(10.0)
 
     logging.log(level=logging.DATA, msg='*********** TASK ENDED *************\tsys:{}'.format(time.time()))
